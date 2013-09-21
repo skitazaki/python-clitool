@@ -5,10 +5,10 @@ python:
   - pypy
 before_install:
   - pip install -r requirements.txt --use-mirrors
-  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install python-dateutil==1.5 pyflakes --use-mirrors; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == '3.2' ]]; then pip install python-dateutil>=2.0 --use-mirrors; fi"
-  - "if [[ $TRAVIS_PYTHON_VERSION == 'pypy' ]]; then pip install python-dateutil pyflakes --use-mirrors; fi"
+  - pip install -r dev-requirements.txt --use-mirrors
+  - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install pyflakes --use-mirrors; fi"
+  - "if [[ $TRAVIS_PYTHON_VERSION == 'pypy' ]]; then pip install pyflakes --use-mirrors; fi"
 install:
   #Temporal solution to travis issue #155
   - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
-script: "python etc/waf-1.7.9 cleanbuild"
+script: "python etc/waf-1.7.13 cleanbuild"

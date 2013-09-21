@@ -4,13 +4,13 @@ Command line tool project template
 
 [master]
 
-.. image:: https://secure.travis-ci.org/skitazaki/python-clitool-template.png?branch=master
-    :target: https://secure.travis-ci.org/skitazaki/python-clitool-template
+.. image:: https://secure.travis-ci.org/skitazaki/python-clitool.png?branch=master
+    :target: https://secure.travis-ci.org/skitazaki/python-clitool
 
 [develop]
 
-.. image:: https://secure.travis-ci.org/skitazaki/python-clitool-template.png?branch=develop
-    :target: https://secure.travis-ci.org/skitazaki/python-clitool-template
+.. image:: https://secure.travis-ci.org/skitazaki/python-clitool.png?branch=develop
+    :target: https://secure.travis-ci.org/skitazaki/python-clitool
 
 Prerequisites
 =============
@@ -97,12 +97,6 @@ Don't forget to check test result on travis-ci.
 ::
 
     $ waf release
-
-To create API documentation, use ``apidoc`` target.
-
-::
-
-    $ waf apidoc
 
 And upload generated ZIP file on PyPI manually.
 

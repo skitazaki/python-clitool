@@ -1,17 +1,14 @@
-from setuptools import setup, find_packages
-import sys, os
+from setuptools import setup
 
 import clitool
 
-with open('README.txt') as file:
-    long_description = file.read()
 
 setup(name='clitool',
       version=clitool.__version__,
       description="Command Line Script Support Utility",
-      long_description=long_description,
+      long_description=clitool.__doc__,
       classifiers=[ # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: Developers",
         "Intended Audience :: Education"
@@ -19,9 +16,8 @@ setup(name='clitool',
       keywords='',
       author='KITAZAKI Shigeru',
       author_email='skitazaki@gmail.com',
-      url='https://github.com/skitazaki/python-clitool-template',
+      url='https://github.com/skitazaki/python-clitool',
       license='Apache',
-      #packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       packages=['clitool'],
       package_dir={'clitool': 'clitool'},
       include_package_data=False,
