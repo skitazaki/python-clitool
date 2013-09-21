@@ -5,7 +5,7 @@ import clitool
 
 setup(name='clitool',
       version=clitool.__version__,
-      description="Command Line Script Support Utility",
+      description="Command Line Tool Utilities",
       long_description=clitool.__doc__,
       classifiers=[ # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
         "Development Status :: 4 - Beta",
@@ -24,7 +24,6 @@ setup(name='clitool',
       zip_safe=False,
       install_requires=[
         'six'
-          # -*- Extra requirements: -*-
       ],
       entry_points="""
       # -*- Entry points: -*-

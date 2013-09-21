@@ -1,5 +1,5 @@
 ==================================
-Command line tool project template
+Command Line Tool Utilities
 ==================================
 
 [master]
@@ -85,7 +85,7 @@ Check required tools are successfully installed.
 Build & Release
 ===============
 
-``cleanbuild`` target includes ``distclean``, ``configure``, ``build``, ``test``, and ``example``.
+``cleanbuild`` target includes ``distclean``, ``configure``, ``build``, and ``example``.
 
 ::
 
@@ -98,14 +98,14 @@ Don't forget to check test result on travis-ci.
 
     $ waf release
 
-And upload generated ZIP file on PyPI manually.
+And, forget to upload generated ZIP file of documents on PyPI manually.
 
 Project layout
 ==============
 
+* *clitool* : Main source code go here.
 * *doc*     : Specification or API documentations.
 * *etc*     : Support files
-* *clitool* : Main source code go here.
 * *tests*   : Test code go here.
 
 Copyright and license

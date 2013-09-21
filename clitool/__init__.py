@@ -2,7 +2,7 @@
 
 """
 ===================================
-Command Line Script Support Utility
+Command Line Tool Utilities
 ===================================
 
 * One line argument parsing function and decorator

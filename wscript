@@ -26,13 +26,14 @@ def build(bld):
         bld(rule='${PEP8} --ignore=E126,E128 --show-source ${SRC}', source=node)
         if sys.version_info.major == 2:
             bld(rule='${PYFLAKES} ${SRC}', source=node)
+    os.environ['PYTHONPATH'] = os.getcwd()
     nodes = bld.path.ant_glob(['tests/**/*.py'])
     for node in nodes:
         bld(rule='${PEP8} --ignore=E126,E128,E501 --show-source ${SRC}', source=node)
         if sys.version_info.major == 2:
             bld(rule='${PYFLAKES} ${SRC}', source=node)
         bld(rule='${PYTEST} --junitxml=${TGT} ${SRC}',
-            source=t, target=t.get_bld().change_ext('.xml'))
+            source=node, target=node.get_bld().change_ext('.xml'))
 
 
 def example(ctx):
