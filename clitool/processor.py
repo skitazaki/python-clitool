@@ -34,7 +34,12 @@ if PY3:
     import io
 
     def csvreader3(fp, encoding, **kwargs):
-        return csv.reader(io.TextIOWrapper(fp.buffer, encoding), **kwargs)
+        buf = getattr(fp, 'buffer', None)
+        if buf:
+            stream = io.TextIOWrapper(buf, encoding)
+        else:
+            stream = fp
+        return csv.reader(stream, **kwargs)
 
     csvreader = csvreader3
 
@@ -247,7 +252,7 @@ class CliHandler(object):
         self.streamer = streamer
         self.delimiter = delimiter
 
-    def reader(self, fp, encoding=None):
+    def reader(self, fp, encoding):
         """ Simple `open` wrapper for several file types.
         This supports ``.gz`` and ``.json``.
 

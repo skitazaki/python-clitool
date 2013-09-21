@@ -14,9 +14,12 @@ import inspect
 import os
 import sys
 import argparse
+import warnings
 from functools import wraps
 
 from clitool import DEFAULT_ENCODING
+
+warnings.simplefilter("always")
 
 
 def base_parser():
@@ -196,11 +199,13 @@ def clistream(reporter, *args, **kwargs):
     More detailed information is available on underlying feature,
     :mod:`clitool.processor`.
 
-    :param Handler: Handler for file-like streams.
+    :param Handler: [DEPRECATED] Handler for file-like streams.
             (default: :class:`clitool.processor.CliHandler`)
     :type Handler: object which supports `handle` method.
     :param reporter: callback to report processed value
     :type reporter: callable
+    :param delimiter: line delimiter [optional]
+    :type delimiter: string
     :param args: functions to parse each item in the stream.
     :param kwargs: keywords, including ``files`` and ``input_encoding``.
     :rtype: list
@@ -212,9 +217,14 @@ def clistream(reporter, *args, **kwargs):
     chunksize = kwargs.get('chunksize')
 
     from clitool.processor import CliHandler, Streamer
-    Handler = kwargs.get('Handler', CliHandler)
+    Handler = kwargs.get('Handler')
+    if Handler:
+        warnings.warn('"Handler" keyword will be removed from next release.',
+            DeprecationWarning)
+    else:
+        Handler = CliHandler
     s = Streamer(reporter, processes=processes, *args)
-    handler = Handler(s)
+    handler = Handler(s, kwargs.get('delimiter'))
 
     return handler.handle(files, encoding, chunksize)
 

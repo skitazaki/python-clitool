@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import sys
-if sys.version_info[0] == 3:
-    from io import StringIO
-else:
-    from cStringIO import StringIO
+
+from six import StringIO
 
 from clitool.processor import (
     CliHandler,
