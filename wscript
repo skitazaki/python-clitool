@@ -15,12 +15,12 @@ def configure(ctx):
     ctx.find_program('pep8')
     if sys.version_info.major == 2:
         ctx.find_program('pyflakes')
-    #ctx.find_program('sphinx-build')
+    ctx.find_program('sphinx-build')
     ctx.find_program('py.test', var='PYTEST')
 
 
 def build(bld):
-    nodes = bld.path.ant_glob(['src/**/*.py'],
+    nodes = bld.path.ant_glob(['clitool/**/*.py'],
                     excl=['**/setup.py', '**/unicodecsv.py'])
     for node in nodes:
         bld(rule='${PEP8} --ignore=E126,E128 --show-source ${SRC}', source=node)
@@ -31,29 +31,17 @@ def build(bld):
         bld(rule='${PEP8} --ignore=E126,E128,E501 --show-source ${SRC}', source=node)
         if sys.version_info.major == 2:
             bld(rule='${PYFLAKES} ${SRC}', source=node)
-    runtests(bld)
-
-
-def runtests(bld):
-    # XXX: improve the way to resolve PYTHONPATH
-    path = 'PYTHONPATH=' + bld.path.find_dir('src').abspath()
     tests = bld.path.ant_glob(['tests/*.py'])
     for t in tests:
-        bld(rule='%s ${PYTEST} --junitxml=${TGT} ${SRC}' % (path,),
+        bld(rule='${PYTEST} --junitxml=${TGT} ${SRC}',
             source=t, target=t.get_bld().change_ext('.xml'))
 
 
 def example(ctx):
-    ctx.exec_command('python setup.py install', cwd='src')
-    ctx.exec_command('python src/logfile.py data/access_log')
-    ctx.exec_command('python src/logparams.py < data/access_log')
-    #ctx.exec_command('python src/logparams.py --processes=4 < data/access_log')
-    ctx.exec_command('python src/csv2json.py --input-encoding=cp932 data/jppostcode.csv')
-    ctx.exec_command('python src/csv2db.py --input-encoding=cp932 -c src/config.json data/jppostcode.csv')
-    ctx.exec_command('python src/csv2kml.py --input-encoding=cp932 data/jpmilt.csv')
+    ctx.exec_command('python setup.py install')
     ctx.exec_command('python -m clitool.cli -o o.py')
     ctx.exec_command('python -m clitool.accesslog < data/access_log')
-    #ctx.exec_command("pip uninstall clitool")
+    ctx.exec_command("pip uninstall clitool")
 
 
 def cleanbuild(ctx):
@@ -62,14 +50,15 @@ def cleanbuild(ctx):
 
 
 def release(ctx):
-    ctx.exec_command('python setup.py clean sdist upload', cwd='src')
+    ctx.exec_command('python setup.py clean sdist upload')
 
 
 def doc(ctx):
-    os.environ['PYTHONPATH'] = ctx.path.find_dir('src').abspath()
+    ctx.exec_command('python setup.py install')
     wd = 'doc'
     cmd = ['make', 'html']
     ctx.exec_command(cmd, cwd=wd)
+    ctx.exec_command("pip uninstall clitool")
 
 
 def docclean(ctx):

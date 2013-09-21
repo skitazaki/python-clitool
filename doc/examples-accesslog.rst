@@ -4,8 +4,6 @@ Examples to Parse AccessLog
 Create Simple Summary
 -------------------------
 
-.. literalinclude:: ../src/logfile.py
-
 Usage
 `````
 
@@ -32,8 +30,6 @@ Usage
 
 Parse Parameters of Each Line
 -------------------------------
-
-.. literalinclude:: ../src/logparams.py
 
 Usage
 `````

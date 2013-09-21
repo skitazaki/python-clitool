@@ -40,14 +40,15 @@ Install build tool, ``waf``.
 
 ::
 
-    $ ln -s `pwd`/etc/waf-1.7.9 ~/pyvenv2/clitool/bin/waf
+    $ ln -s `pwd`/etc/waf-1.7.13 ~/pyvenv2/clitool/bin/waf
 
 Install dependant libraries.
 
 ::
 
     $ pip install -r requirements.txt
-    $ pip install python-dateutil==1.5 pyflakes
+    $ pip install -r dev-requirements.txt
+    $ pip install pyflakes
 
 Python 3.3
 ----------
@@ -63,14 +64,14 @@ Install build tool, ``waf``.
 
 ::
 
-    $ ln -s `pwd`/etc/waf-1.7.9 ~/pyvenv3/clitool/bin/waf
+    $ ln -s `pwd`/etc/waf-1.7.13 ~/pyvenv3/clitool/bin/waf
 
 Install ``pip`` and dependant libraries.
 
 ::
 
     $ pip-3.3 install -r requirements.txt
-    $ pip-3.3 install python-dateutil>=2.0
+    $ pip-3.3 install -r dev-requirements.txt
 
 Check installation
 ------------------
@@ -108,11 +109,10 @@ And upload generated ZIP file on PyPI manually.
 Project layout
 ==============
 
-* *doc*   : Specification or API documentations.
-* *etc*   : Support files, such as win32 specific scripts.
-* *src*   : Main source code go here.
-* *tests* : Test code go here.
-* *data*  : Various data files for test.
+* *doc*     : Specification or API documentations.
+* *etc*     : Support files
+* *clitool* : Main source code go here.
+* *tests*   : Test code go here.
 
 Copyright and license
 ======================
