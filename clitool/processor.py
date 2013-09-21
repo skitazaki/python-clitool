@@ -11,7 +11,6 @@ import multiprocessing
 import os
 import sys
 import time
-import warnings
 from collections import Counter
 
 from six import PY3
@@ -43,8 +42,6 @@ else:
         return UnicodeReader(fp, encoding=encoding, **kwargs)
 
     csvreader = csvreader2
-
-warnings.simplefilter("always")
 
 
 class SimpleDictReporter(object):
@@ -291,10 +288,5 @@ class CsvHandler(CliHandler):
     def reader(self, fp, encoding):
         return csvreader(fp, encoding)
 
-
-def clistream(reporter, *args, **kwargs):
-    warnings.warn("use 'clitool.cli.clistream' instead.", DeprecationWarning)
-    from .cli import clistream as new_clistream
-    return new_clistream(reporter, *args, **kwargs)
 
 # vim: set et ts=4 sw=4 cindent fileencoding=utf-8 :

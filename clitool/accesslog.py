@@ -166,12 +166,7 @@ def logparse(*args, **kwargs):
     from clitool.cli import clistream
     from clitool.processor import SimpleDictReporter
 
-    lst = [parse]
-    analyzer = kwargs.get('analyzer')
-    if analyzer:
-        warnings.warn("analyzer keyword is deprecated.", DeprecationWarning)
-        lst.append(analyzer)
-    lst += args
+    lst = [parse] + args
     reporter = SimpleDictReporter()
     stats = clistream(reporter, *lst, **kwargs)
     return stats, reporter.report()
