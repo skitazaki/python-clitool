@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import logging
+from livereload.task import Task
+
+
+def sphinx():
+    from subprocess import Popen, PIPE
+    from os import path
+    builddir = "_build"
+    argv = [
+        "sphinx-build", "-q",
+        "-b", "html",
+        "-d", path.join(builddir, "doctrees"),
+        ".", path.join(builddir, "html")
+    ]
+    logging.debug("Start to build into %s", builddir)
+    p = Popen(argv, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    # Wait reloading until build process finished.
+    stdout, stderr = p.communicate()
+    if stderr:
+        logging.error(stderr)
+    logging.debug("Finish to build: %s", stdout)
+
+
+Task.add('*.rst', sphinx)
