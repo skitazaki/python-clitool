@@ -11,6 +11,7 @@ import multiprocessing
 import os
 import sys
 import time
+import warnings
 from collections import Counter
 
 from six import PY3
@@ -25,6 +26,8 @@ from clitool import (
     PROCESSING_TOTAL,
     PROCESSING_TIME
 )
+
+warnings.simplefilter("always")
 
 if PY3:
     import csv
@@ -156,11 +159,15 @@ class Streamer(object):
                     self.processes, multiprocessing.cpu_count()))
         self.reporting_interval = PROCESSING_REPORTING_INTERVAL
 
-    def consume(self, stream, chunksize=1):
+    def consume(self, stream, source=None, chunksize=1):
         """ Consuming given strem object and returns processing stats.
 
         :param stream: streaming object to consume
         :type stream: iterable
+        :param source: source of stream to consume
+        :type source: string
+        :param chunksize: chunk size for multiprocessing
+        :type chunksize: integer
         :rtype: dict
         """
         stats = {
@@ -169,6 +176,8 @@ class Streamer(object):
             PROCESSING_SUCCESS: 0,
             PROCESSING_ERROR: 0
         }
+        if source:
+            stats['source'] = source
 
         def skip_unless(r):
             if r:
@@ -216,10 +225,11 @@ class Streamer(object):
                 pool.join()
             stats[PROCESSING_TIME] = time.time() - start
             logging.info(
-                "STATS: total=%d, skipped=%d, success=%d, error=%d on %f[sec]",
+                'STATS: total=%d, skipped=%d, success=%d, error=%d on %f[sec]'
+                ' from "%s"',
                 stats[PROCESSING_TOTAL], stats[PROCESSING_SKIPPED],
                 stats[PROCESSING_SUCCESS], stats[PROCESSING_ERROR],
-                stats[PROCESSING_TIME])
+                stats[PROCESSING_TIME], stats.get('source', 'unknown'))
             return stats
 
 
@@ -229,10 +239,13 @@ class CliHandler(object):
 
     :param streamer: streaming object
     :type streamer: Streamer
+    :param delimiter: column delimiter such as "\t"
+    :type delimiter: string
     """
 
-    def __init__(self, streamer):
+    def __init__(self, streamer, delimiter=None):
         self.streamer = streamer
+        self.delimiter = delimiter
 
     def reader(self, fp, encoding=None):
         """ Simple `open` wrapper for several file types.
@@ -250,6 +263,10 @@ class CliHandler(object):
             return gzip.open(fp.name)
         elif suffix == '.json':
             return json.load(fp)
+        elif suffix == '.csv' or self.delimiter:
+            return csvreader(fp, encoding, delimiter=self.delimiter or ',')
+        elif suffix == '.tsv':
+            return csvreader(fp, encoding, delimiter='\t')
         return fp
 
     def handle(self, files, encoding, chunksize=1):
@@ -267,18 +284,17 @@ class CliHandler(object):
         if files:
             logging.info("Input file count: %d", len(files))
             for fp in files:
-                fname = fp.name
-                logging.info("Start processing: %s", fname)
-                reader = self.reader(fp, encoding)
-                parsed = self.streamer.consume(reader, chunksize)
-                logging.info("End processing: %s", fname)
-                parsed['file'] = fname
+                stream = self.reader(fp, encoding)
+                parsed = self.streamer.consume(stream,
+                    source=fp.name, chunksize=chunksize)
                 stats.append(parsed)
                 if not fp.closed:
                     fp.close()
         else:
-            reader = self.reader(sys.stdin, encoding)
-            parsed = self.streamer.consume(reader)
+            stream = sys.stdin
+            if self.delimiter:
+                stream = csvreader(stream, encoding, delimiter=self.delimiter)
+            parsed = self.streamer.consume(stream, chunksize=chunksize)
             stats.append(parsed)
         return stats
 
@@ -286,6 +302,8 @@ class CliHandler(object):
 class CsvHandler(CliHandler):
 
     def reader(self, fp, encoding):
+        warnings.warn('use "CliHandler()" with "delimiter" option instead',
+            DeprecationWarning)
         return csvreader(fp, encoding)
 
 

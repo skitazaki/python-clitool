@@ -1,7 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+if sys.version_info[0] == 3:
+    from io import StringIO
+else:
+    from cStringIO import StringIO
+
 from clitool.processor import (
+    CliHandler,
     RowMapper,
     SimpleDictReporter,
     Streamer
@@ -183,5 +190,21 @@ def test_row_mapper_missing_field():
     assert r['field3'] == 3
     assert r['field4'] == 4
 
+
+def test_clihander():
+    dt = []
+    mapper = RowMapper(['A', 'B', 'C'])
+    s = Streamer(dt.append, mapper)
+    handler = CliHandler(s, delimiter=',')
+    sys.stdin = StringIO()
+    sys.stdin.write('A,B,C\n1,2,3')
+    sys.stdin.seek(0)
+    handler.handle(None, 'utf-8')
+    print dt
+    assert len(dt) == 1
+    r = dt[0]
+    assert r['A'] == '1'
+    assert r['B'] == '2'
+    assert r['C'] == '3'
 
 # vim: set et ts=4 sw=4 cindent fileencoding=utf-8 :
