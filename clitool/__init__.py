@@ -34,10 +34,9 @@ At first, create your script file using module script, ``clitool.cli``.
 
 ::
 
-    $ python -m clitool.cli > your-script.py
-    $ chmod +x your-script.py
+    $ python -m clitool.cli -o your-script.py
 
-This file can parse  basic command line options and arguments.
+This file can parse basic command line options and arguments.
 
 ::
 
@@ -83,8 +82,6 @@ Example scripts exist in git repository.
 * csv2kml.py: read csv data and dump them by KML format via 'simplekml'.
 * logfile.py: parse Apache access log and create report.
 * logparams.py: parse Apache access log and analyze query parameters.
-* ldgourmet-category-tree.py: load csv data and build category tree.
-
 """
 
 __title__ = 'clitool'

@@ -212,7 +212,7 @@ def clistream(reporter, *args, **kwargs):
     """
     # Follow the rule of `parse_arguments()`
     files = kwargs.get('files')
-    encoding = kwargs.get('input_encoding')
+    encoding = kwargs.get('input_encoding', DEFAULT_ENCODING)
     processes = kwargs.get('processes')
     chunksize = kwargs.get('chunksize')
 

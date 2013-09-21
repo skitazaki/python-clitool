@@ -28,5 +28,4 @@ Contents:
 
    examples-csv
    examples-accesslog
-   examples-misc
    clitool
