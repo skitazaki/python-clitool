@@ -34,13 +34,6 @@ Example usage::
 import sys
 from datetime import datetime
 
-from six import PY3
-if PY3:
-    str_type = str
-else:
-    from clitool import DEFAULT_ENCODING
-    str_type = lambda v: unicode(v, DEFAULT_ENCODING)
-
 
 class Sequential(object):
     """Apply callback functions sequentially.
@@ -114,7 +107,7 @@ class RowMapper(object):
                 continue
             k, t = h['id'], h['type']
             if t == 'string':
-                dt[k] = str_type(v)
+                dt[k] = v
             elif t == 'integer':
                 dt[k] = int(v)
             elif t == 'float':
