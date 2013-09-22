@@ -13,6 +13,7 @@ This module is also executable to parse access log record.
 
     $ tail -f /var/log/httpd/access_log | python -m clitool.accesslog
 
+Ouput labels come from <http://ltsv.org/>
 """
 
 import datetime
@@ -56,8 +57,61 @@ Access = namedtuple('Access',
     method path query protocol status size referer ua trailing''')
 
 
+def parse(line):
+    """ Parse accesslog line to map Python dictionary.
+
+    Returned dictionary has following keys:
+
+    - time: access time (datetime)
+    - host: remote IP address.
+    - path: HTTP request path, this will be splitted from query.
+    - query: HTTP requert query string removed from "?".
+    - method: HTTP request method.
+    - protocol: HTTP request version.
+    - status: HTTP response status code. (int)
+    - size: HTTP response size, if available. (int)
+    - referer: Referer header. if "-" is given, that will be ignored.
+    - ua: User agent. if "-" is given, that will be ignored.
+    - ident: remote logname
+    - user: remote user
+    - trailing: Additional information if using custom log format.
+
+    :param line: one line of access log combined format
+    :type line: string
+    :rtype: dict
+    """
+    m = LOG_FORMAT.match(line)
+    if m is None:
+        return
+    access = Access._make(m.groups())
+    entry = {
+        'host': access.host,
+        'path': access.path,
+        'query': access.query,
+        'method': access.method,
+        'protocol': access.protocol,
+        'status': int(access.status)
+    }
+    entry['time'] = datetime.datetime(
+        int(access.year), MONTH_ABBR[access.month], int(access.day),
+        int(access.hour), int(access.minute), int(access.second))
+    if access.ident != '-':
+        entry['ident'] = access.ident
+    if access.user != '-':
+        entry['user'] = access.user
+    if access.size != '-':
+        entry['size'] = int(access.size)
+    if access.referer != '-':
+        entry['referer'] = access.referer
+    if access.ua != '-':
+        entry['ua'] = access.ua
+    if access.trailing:
+        entry['trailing'] = access.trailing.strip()
+    return entry
+
+
 def logentry(raw):
-    """ Process accesslog record to map Python dictionary.
+    """[DEPRECATED] Process accesslog record to map Python dictionary.
 
     Returned dictionary has following keys:
 
@@ -75,37 +129,28 @@ def logentry(raw):
     - user: remote user
     - trailing: Additional information if using custom log format.
 
-    :param access: internal object which represent accesslog record
-    :type access: Access
+    :param raw: one line of access log combined format
+    :type raw: string
     :rtype: dict
     """
-    m = LOG_FORMAT.match(raw.rstrip())
-    if m is None:
+    warnings.warn('use "parse()" instead', DeprecationWarning)
+    e = parse(raw.rstrip())
+    if e is None:
         return
-    access = Access._make(m.groups())
+    # backward compat mapping
     entry = {
-        'remote_address': access.host,
-        'request_path': access.path,
-        'request_query': access.query,
-        'request_method': access.method,
-        'request_version': access.protocol,
-        'response_status': int(access.status)
+        'access_time': e['time'],
+        'remote_address': e['host'],
+        'request_path': e['path'],
+        'request_query': e['query'],
+        'request_method': e['method'],
+        'request_version': e['protocol'],
+        'response_status': e['status']
     }
-    entry['access_time'] = datetime.datetime(
-        int(access.year), MONTH_ABBR[access.month], int(access.day),
-        int(access.hour), int(access.minute), int(access.second))
-    if access.ident != '-':
-        entry['ident'] = access.ident
-    if access.user != '-':
-        entry['user'] = access.user
-    if access.size != '-':
-        entry['response_size'] = int(access.size)
-    if access.referer != '-':
-        entry['referer'] = access.referer
-    if access.ua != '-':
-        entry['user_agent'] = access.ua
-    if access.trailing:
-        entry['trailing'] = access.trailing.strip()
+    if 'size' in e:
+        entry['response_size'] = e['size']
+    if 'user_agent' in e:
+        entry['user_agent'] = e['ua']
     return entry
 
 
@@ -121,12 +166,7 @@ def logparse(*args, **kwargs):
     from clitool.cli import clistream
     from clitool.processor import SimpleDictReporter
 
-    lst = [logentry]
-    analyzer = kwargs.get('analyzer')
-    if analyzer:
-        warnings.warn("analyzer keyword is deprecated.", DeprecationWarning)
-        lst.append(analyzer)
-    lst += args
+    lst = [parse] + args
     reporter = SimpleDictReporter()
     stats = clistream(reporter, *lst, **kwargs)
     return stats, reporter.report()
@@ -147,14 +187,14 @@ if __name__ == '__main__':
     lst = map(int, args.status.split(',')) if args.status else None
 
     def p(e):
-        if lst and not e['response_status'] in lst:
+        if lst and not e['status'] in lst:
             return
         colored = False
         if args.color:
-            if e['response_status'] >= 500:
+            if e['status'] >= 500:
                 print_(RED, end='')
                 colored = True
-            if e['response_status'] >= 400:
+            if e['status'] >= 400:
                 print_(PURPLE, end='')
                 colored = True
         for k in sorted(e.keys()):
@@ -164,7 +204,7 @@ if __name__ == '__main__':
             print_(END, end='')
         print_("-" * 40)
 
-    stats = clistream(p, logentry, files=args.files)
+    stats = clistream(p, parse, files=args.files)
     print_(stats)
 
 # vim: set et ts=4 sw=4 cindent fileencoding=utf-8 :

@@ -3,7 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to clitool's documentation!
+===================================
+What's clitool
 ===================================
 
 `clitool` is a handy library to support you implementing command line script.
@@ -26,7 +27,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   examples-csv
-   examples-accesslog
-   examples-misc
+   examples
    clitool
+
+==========
+Changes
+==========
+
+.. include:: ../CHANGES.rst

@@ -20,14 +20,12 @@ Basic script looks like::
 
     from clitool.cli import climain, cliconfig, clistream
 
-    def tsv(line):
-        return line.split('\t')
 
     @climain
     def main(config, output, **kwargs):
         # Load all tab-separated data onto `data`.
         data = []
-        clistream(data.append, tsv, **kwargs)
+        clistream(data.append, delimiter='\t', **kwargs)
 
         # Dump all data into given output stream. (default is standard output)
         pprint(data, stream=output)
@@ -35,7 +33,16 @@ Basic script looks like::
         # Get database connection from given configuration file.
         cfg = cliconfig(config)
         dsl = cfg.get("YOUR_DATABASE_CONFIG_KEY")
-        # XXX: Implement your code to use database session.
+        # Implement database session factory code.
+        session = SessionFactory(dsl).create()
+
+        # Save all data on database
+        for dt = data:
+            # Implement mapping code from input to database model.
+            e = mapping(dt)
+            session.save(e)
+
+        session.commit()
 
 
     if __name__ == '__main__':
@@ -86,7 +93,7 @@ INI format
 .. code-block:: ini
 
     [development]
-    database.url=sqlite:///:memory:
+    database.url=sqlite:///sample.sqlite
 
     [staging]
     database.url=postgresql+pypostgresql://user:pass@host/database
@@ -101,8 +108,7 @@ JSON style
     {
         "development": {
             "database": {
-                "url": "sqlite:///:memory:",
-                "auto": true
+                "url": "sqlite:///sample.sqlite"
             }
         },
         "staging": {
@@ -123,7 +129,7 @@ YAML style
 
     development:
       database:
-        url: "sqlite:///:memory:"
+        url: "sqlite:///sample.sqlite"
 
     staging:
       database:
@@ -150,16 +156,18 @@ YAML style
 
 Parsed record is a map object which has following properties.
 
-- *remote_address* : Remote IP address.
-- *access_time* : Access date and time. (datetime object)
-- *request_path* : HTTP request path which is splitted from query.
-- *request_query* : HTTP requert query string which is removed from "?".
-- *request_method* : HTTP request method.
-- *request_version* : HTTP request version.
-- *response_status* : HTTP response status code. (int)
-- *response_size* : HTTP response size, if available. (int)
+- *host* : Remote IP address.
+- *time* : Access date and time. (datetime object)
+- *path* : HTTP request path which is splitted from query.
+- *query* : HTTP requert query string which is removed from "?".
+- *method* : HTTP request method.
+- *protocol* : HTTP request protocol version.
+- *status* : HTTP response status code. (int)
+- *size* : HTTP response size, if available. (int)
 - *referer* : Referer header. If "-" is given, this property does not exist.
-- *user_agent* : User agent. If "-" is given, this property does not exist.
+- *ua* : User agent. If "-" is given, this property does not exist.
+- *ident* : remote logname
+- *user* : remote user
 - *trailing* : Additional information if using custom log format.
 
 This module also work as script file.
@@ -171,8 +179,8 @@ Simple usage is that:
 
 And two options are available.
 
-- *color* : Set color on error record.
-- *status* : Filter condition along with response status.
+- *--color* : Set color on error record.
+- *--status* : Filter condition along with response status.
 
 If you would like to check only error responses, set ``--status=500,503``.
 
@@ -184,6 +192,13 @@ To get Top 10 access, try it.
 
     $ python -m clitool.accesslog /var/log/httpd/access_log |
         grep request_path | sort | uniq -c | sort -nr | head -n 10
+
+:mod:`textio` Module
+-----------------------
+
+.. automodule:: clitool.textio
+    :members:
+    :show-inheritance:
 
 
 :mod:`_unicodecsv` Module

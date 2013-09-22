@@ -70,6 +70,10 @@ Install ``pip`` and dependant libraries.
 
 ::
 
+    $ curl -O http://python-distribute.org/distribute_setup.py
+    $ python distribute_setup.py
+    $ rm distribute*
+    $ easy_install-3.3 pip
     $ pip-3.3 install -r requirements.txt
     $ pip-3.3 install -r dev-requirements.txt
 

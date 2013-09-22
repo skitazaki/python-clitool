@@ -14,9 +14,12 @@ import inspect
 import os
 import sys
 import argparse
+import warnings
 from functools import wraps
 
 from clitool import DEFAULT_ENCODING
+
+warnings.simplefilter("always")
 
 
 def base_parser():
@@ -89,18 +92,21 @@ def parse_arguments(**kwargs):
     Examples - multiple files including zero ::
 
         cliargs = parse_arguments(files=dict(nargs='*'))
-        print(cliargs.files)
+        if cliargs.files:
+            for fp in cliargs.files:
+                print(fp.name)
 
     Examples - only one file (but property is list of files) ::
 
         cliargs = parse_arguments(files=dict(nargs=1))
-        print(cliargs.files)
+        fp = cliargs.files[0]
+        print(fp.name)
 
     Examples - mode switch of defined values ::
 
         cliargs = parse_arguments(mode=dict(
                     flags=('-m', '--mode'), required=True,
-                    choises=("A", "B", "C")))
+                    choices=("A", "B", "C")))
         print(cliargs.mode)
 
     :param kwargs: keywords arguments to pass :meth:`add_argument` method.
@@ -196,25 +202,32 @@ def clistream(reporter, *args, **kwargs):
     More detailed information is available on underlying feature,
     :mod:`clitool.processor`.
 
-    :param Handler: Handler for file-like streams.
+    :param Handler: [DEPRECATED] Handler for file-like streams.
             (default: :class:`clitool.processor.CliHandler`)
     :type Handler: object which supports `handle` method.
     :param reporter: callback to report processed value
     :type reporter: callable
+    :param delimiter: line delimiter [optional]
+    :type delimiter: string
     :param args: functions to parse each item in the stream.
     :param kwargs: keywords, including ``files`` and ``input_encoding``.
     :rtype: list
     """
     # Follow the rule of `parse_arguments()`
     files = kwargs.get('files')
-    encoding = kwargs.get('input_encoding')
+    encoding = kwargs.get('input_encoding', DEFAULT_ENCODING)
     processes = kwargs.get('processes')
     chunksize = kwargs.get('chunksize')
 
     from clitool.processor import CliHandler, Streamer
-    Handler = kwargs.get('Handler', CliHandler)
+    Handler = kwargs.get('Handler')
+    if Handler:
+        warnings.warn('"Handler" keyword will be removed from next release.',
+            DeprecationWarning)
+    else:
+        Handler = CliHandler
     s = Streamer(reporter, processes=processes, *args)
-    handler = Handler(s)
+    handler = Handler(s, kwargs.get('delimiter'))
 
     return handler.handle(files, encoding, chunksize)
 

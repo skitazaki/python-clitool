@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 APPNAME = 'clitool'
-VERSION = '0.3.2'
+VERSION = '0.4.0'
 
 top = '.'
 out = '_build'
@@ -33,7 +33,7 @@ def build(bld):
         if sys.version_info.major == 2:
             bld(rule='${PYFLAKES} ${SRC}', source=node)
         bld(rule='${PYTEST} --junitxml=${TGT} ${SRC}',
-            source=node, target=node.get_bld().change_ext('.xml'))
+            source=node, target=node.change_ext('.xml'))
 
 
 def example(ctx):

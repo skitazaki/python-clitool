@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from clitool.accesslog import logentry
+from clitool.accesslog import parse
 
 
 def test_accesslog_regex():
@@ -14,7 +14,7 @@ def test_accesslog_regex():
 '''.strip().split('\n')
     error = []
     for t in TESTS:
-        e = logentry(t)
+        e = parse(t)
         if e is None:
             error.append(t)
     if error:
