@@ -166,6 +166,8 @@ Parsed record is a map object which has following properties.
 - *size* : HTTP response size, if available. (int)
 - *referer* : Referer header. If "-" is given, this property does not exist.
 - *ua* : User agent. If "-" is given, this property does not exist.
+- *ident* : remote logname
+- *user* : remote user
 - *trailing* : Additional information if using custom log format.
 
 This module also work as script file.
@@ -190,6 +192,13 @@ To get Top 10 access, try it.
 
     $ python -m clitool.accesslog /var/log/httpd/access_log |
         grep request_path | sort | uniq -c | sort -nr | head -n 10
+
+:mod:`textio` Module
+-----------------------
+
+.. automodule:: clitool.textio
+    :members:
+    :show-inheritance:
 
 
 :mod:`_unicodecsv` Module

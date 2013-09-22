@@ -106,6 +106,8 @@ class RowMapper(object):
     def __init__(self, header=None, loose=False, *args, **kwargs):
         self.header = header
         self.loose = loose
+        warnings.warn('use "clitool.textio.RowMapper" instead',
+            DeprecationWarning)
 
     def __call__(self, row, *args, **kwargs):
         """
