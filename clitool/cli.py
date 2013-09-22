@@ -92,18 +92,21 @@ def parse_arguments(**kwargs):
     Examples - multiple files including zero ::
 
         cliargs = parse_arguments(files=dict(nargs='*'))
-        print(cliargs.files)
+        if cliargs.files:
+            for fp in cliargs.files:
+                print(fp.name)
 
     Examples - only one file (but property is list of files) ::
 
         cliargs = parse_arguments(files=dict(nargs=1))
-        print(cliargs.files)
+        fp = cliargs.files[0]
+        print(fp.name)
 
     Examples - mode switch of defined values ::
 
         cliargs = parse_arguments(mode=dict(
                     flags=('-m', '--mode'), required=True,
-                    choises=("A", "B", "C")))
+                    choices=("A", "B", "C")))
         print(cliargs.mode)
 
     :param kwargs: keywords arguments to pass :meth:`add_argument` method.
