@@ -2,11 +2,8 @@
 Examples
 =========
 
-Examples to Convert CSV File
-============================
-
-CSV to JSON
-------------
+Example to Convert CSV into JSON
+===================================
 
 This script uses following modules.
 
@@ -77,13 +74,129 @@ You can prepare input data from this datapackage.
         main()
 
 
-CSV to Database
----------------
+Example to Save Records in Database
+===========================================
 
 This script uses following modules.
 
 * ``clitool.cli.climain`` to parse command line options.
-* ``clitool.cli.clistream`` to consume input file(s) or standard input.
 * ``clitool.cli.cliconfig`` to load configuration along with environmental variable.
 
-*TO BE WRITTEN*
+Save following configuration as ``config.ini``. ::
+
+    [development]
+    database.url=sqlite:///sample.sqlite
+    database.auto=1
+
+    [staging]
+    database.url=postgresql+pypostgresql://user:pass@host/database
+
+    [production]
+    database.url=mysql://user:pass@host/database
+
+If you set "staging" on `PYTHON_CLITOOL_ENV` environmental variable,
+``cliconfig`` loads "staging" section of configuration.
+Default loading section is "development".
+
+Since next script requires "`SQLAlchemy <http://www.sqlalchemy.org/>`_",
+you install it a priori. ::
+
+    $ pip install SQLAlchemy
+
+.. code-block:: python
+
+    #!/usr/bin/env python
+    # -*- coding: utf-8 -*-
+
+    """Example to Save Records in Database.
+    """
+
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.ext.declarative import declarative_base
+    from sqlalchemy import Column, Integer, String
+
+    from clitool.cli import climain, cliconfig
+
+
+    Session = sessionmaker()
+    Base = declarative_base()
+
+
+    class Address(Base):
+
+        __tablename__ = 'address_jp'
+        __table_args__ = {'sqlite_autoincrement': True}
+
+        id = Column(Integer, primary_key=True)
+        jis_code = Column(String)
+        zipcode = Column(String)
+        prefecture_en = Column(String)
+        city_en = Column(String)
+        town_en = Column(String)
+        multi_zipcode = Column(Integer)
+        koaza_split = Column(Integer)
+        choume_view = Column(Integer)
+        multi_chouiki = Column(Integer)
+        update_view = Column(Integer)
+        update_reason = Column(Integer)
+
+        def __repr__(self):
+            return "<Address('%s')>" % (self.jis_code)
+
+
+    class SessionFactory(object):
+
+        def __init__(self, dsl, auto=False):
+            engine = create_engine(dsl)
+            if auto:
+                Base.metadata.create_all(engine)
+            Session.configure(bind=engine)
+
+        def create(self):
+            return Session()
+
+
+    @climain
+    def main(config):
+        cfg = cliconfig(config)
+        session = SessionFactory(cfg['database.url'], cfg.get('database.auto')).create()
+
+        for r in RECORDS:
+            e = Address(**r)
+            session.add(e)
+
+        session.commit()
+
+
+    # SAMPLE DATA
+    RECORDS = (
+        {
+            "jis_code": "01101",
+            "zipcode": "0600000",
+            "city_en": "CHUO-KU SAPPORO-SHI",
+            "prefecture_en": "HOKKAIDO",
+            "multi_zipcode": False,
+            "koaza_split": False,
+            "choume_view": False,
+            "multi_chouiki": False,
+            "update_view": 0,
+            "update_reason": 0
+        },
+        {
+            "jis_code": "01101",
+            "zipcode": "0640941",
+            "town_en": "ASAHIGAOKA",
+            "city_en": "CHUO-KU SAPPORO-SHI",
+            "prefecture_en": "HOKKAIDO",
+            "multi_zipcode": False,
+            "koaza_split": False,
+            "choume_view": True,
+            "multi_chouiki": False,
+            "update_view": 0,
+            "update_reason": 0
+        }
+    )
+
+    if __name__ == '__main__':
+        main()
