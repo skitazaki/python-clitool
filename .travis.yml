@@ -3,11 +3,10 @@ python:
   - "2.7"
   - "3.2"
   - "3.3"
-before_install:
+  - "3.4"
+install:
   - pip install -r requirements.txt --use-mirrors
   - pip install -r dev-requirements.txt --use-mirrors
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install pyflakes --use-mirrors; fi"
-install:
-  #Temporal solution to travis issue #155
-  - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
-script: "python etc/waf-1.7.13 cleanbuild"
+script: "python etc/waf-1.7.16 cleanbuild"
+

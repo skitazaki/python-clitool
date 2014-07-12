@@ -62,7 +62,8 @@ def parse(line):
 
     Returned dictionary has following keys:
 
-    - time: access time (datetime)
+    - time: access time (datetime; naive)
+    - utcoffset: UTC offset of access time (timedelta)
     - host: remote IP address.
     - path: HTTP request path, this will be splitted from query.
     - query: HTTP requert query string removed from "?".
@@ -75,6 +76,13 @@ def parse(line):
     - ident: remote logname
     - user: remote user
     - trailing: Additional information if using custom log format.
+
+    You can use "utcoffset" with `dateutil.tz.tzoffset` like followings:
+
+    >>> from dateutil.tz import tzoffset
+    >>> e = parse(line)
+    >>> tz = tzoffset(None, e['utcoffset'].total_seconds())
+    >>> t = e['time'].replace(tzinfo=tz)
 
     :param line: one line of access log combined format
     :type line: string
@@ -95,6 +103,10 @@ def parse(line):
     entry['time'] = datetime.datetime(
         int(access.year), MONTH_ABBR[access.month], int(access.day),
         int(access.hour), int(access.minute), int(access.second))
+    # Parse timezone string; "+YYMM" format.
+    entry['utcoffset'] = (1 if access.timezone[0] == '+' else -1) * \
+        datetime.timedelta(hours=int(access.timezone[1:3]),
+                           minutes=int(access.timezone[3:5]))
     if access.ident != '-':
         entry['ident'] = access.ident
     if access.user != '-':

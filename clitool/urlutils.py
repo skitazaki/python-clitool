@@ -30,7 +30,7 @@ def download(url):
         msg = "'%s' is not valid URL."
         tup = (url,)
         raise ValueError(msg % tup)
-    if not '.' in o[1]:
+    if '.' not in o[1]:
         msg = "'%s' does not have server name."
         tup = (url,)
         raise ValueError(msg % tup)

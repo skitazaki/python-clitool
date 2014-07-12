@@ -1,3 +1,10 @@
+Release 0.4.1 (released Jul 14, 2014)
+=========================================
+
+* [feature] Add ``DictMapper`` on "``clitool.textio``" to map text output
+* [feature] Add "utcoffset" on parsed access log
+
+
 Release 0.4.0 (released Sep 22, 2013)
 =========================================
 

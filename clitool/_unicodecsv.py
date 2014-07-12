@@ -13,7 +13,12 @@ More sophisticated implementation is available on "csvkit_" module.
 
 import codecs
 import csv
-import cStringIO
+
+from six import PY3
+if PY3:
+    import io as cStringIO
+else:
+    import cStringIO
 
 
 class UTF8Recoder:
