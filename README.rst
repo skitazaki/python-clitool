@@ -39,7 +39,7 @@ Install build tool, ``waf``.
 
 ::
 
-    $ ln -s `pwd`/etc/waf-1.7.13 ~/.pyvenv/python-clitool-py27/bin/waf
+    $ ln -s `pwd`/etc/waf-1.7.16 ~/.pyvenv/python-clitool-py27/bin/waf
 
 Install dependant libraries.
 
@@ -63,7 +63,7 @@ Install build tool, ``waf``.
 
 ::
 
-    $ ln -s `pwd`/etc/waf-1.7.13 ~/.pyvenv/python-clitool-py34/bin/waf
+    $ ln -s `pwd`/etc/waf-1.7.16 ~/.pyvenv/python-clitool-py34/bin/waf
 
 Install dependant libraries.
 
