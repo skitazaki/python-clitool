@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from clitool.textio import Sequential, RowMapper
+import datetime
+from clitool.textio import Sequential, RowMapper, DictMapper
 
 FIELDS = (
     {'id': 'id', 'type': 'string'},
@@ -26,6 +27,35 @@ def test_row_mapper():
     assert r['zipcode'] == '1112222'
     assert not 'kind' in r, r['kind']
     assert r['update_type'] == 1
+
+
+def test_dict_mapper():
+    mapper = DictMapper(FIELDS)
+    r = {
+        'id': '1',
+        'updated': datetime.datetime(2013, 9, 20, 12, 0, 0),
+        'name': 'A',
+        'latitude': 35.5,
+        'longitude': 136.2,
+        'zipcode': '1112222',
+        'kind': '',
+        'update_type': 1
+    }
+    o = mapper(r)
+    assert ','.join(o) == '1,2013-09-20T12:00:00Z,A,35.5,136.2,1112222,,1'
+
+
+def test_dict_mapper_default():
+    mapper = DictMapper(FIELDS)
+    assert ','.join(mapper({})) == ',,,,,,UNKNOWN,'
+
+
+def test_dict_mapper_float_precision():
+    mapper = DictMapper([
+        {'id': 'value', 'type': 'float', 'precision': 6},
+    ])
+    r = {'value': 3.1415926535}
+    assert ','.join(mapper(r)) == '3.141593'
 
 
 def test_sequential():
