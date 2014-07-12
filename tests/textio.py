@@ -25,7 +25,7 @@ def test_row_mapper():
     assert r['latitude'] == 35.5
     assert r['longitude'] == 136.2
     assert r['zipcode'] == '1112222'
-    assert not 'kind' in r, r['kind']
+    assert 'kind' not in r, r['kind']
     assert r['update_type'] == 1
 
 
@@ -69,7 +69,7 @@ def test_sequential():
     assert r['latitude'] == 35.5
     assert r['longitude'] == 136.2
     assert r['zipcode'] == '1112222'
-    assert not 'kind' in r, r['kind']
+    assert 'kind' not in r, r['kind']
     assert r['update_type'] == 1
 
 # vim: set et ts=4 sw=4 cindent fileencoding=utf-8 :

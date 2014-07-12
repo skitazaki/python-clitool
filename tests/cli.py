@@ -12,7 +12,7 @@ from clitool import DEFAULT_ENCODING
 
 def test_default_settings():
     sys.argv = [__file__, ]
-    #sys.argv = ['python', __file__]
+    # sys.argv = ['python', __file__]
     cwd = os.getcwd()
     args = parse_arguments()
     assert args.basedir == cwd
