@@ -20,11 +20,10 @@ Prerequisites
 
 or
 
-* Python 3.x
-* (virtualenv or pyvenv) + pip
+* Python 3.4
 
-Setup
-=====
+Development Setup
+==================
 
 Python 2.7
 ----------
@@ -33,14 +32,14 @@ Create working directoty and activate it.
 
 ::
 
-    $ virtualenv --distribute ~/pyvenv2/clitool
-    $ source ~/pyvenv2/clitool/bin/activate
+    $ virtualenv --distribute ~/.pyvenv/python-clitool-py27
+    $ source ~/.pyvenv/python-clitool-py27/bin/activate
 
 Install build tool, ``waf``.
 
 ::
 
-    $ ln -s `pwd`/etc/waf-1.7.13 ~/pyvenv2/clitool/bin/waf
+    $ ln -s `pwd`/etc/waf-1.7.13 ~/.pyvenv/python-clitool-py27/bin/waf
 
 Install dependant libraries.
 
@@ -50,32 +49,28 @@ Install dependant libraries.
     $ pip install -r dev-requirements.txt
     $ pip install pyflakes
 
-Python 3.3
+Python 3.4
 ----------
 
 Create working directoty and activate it.
 
 ::
 
-    $ pyvenv ~/pyvenv3/clitool
-    $ source ~/pyvenv3/clitool/bin/activate
+    $ pyvenv ~/.pyvenv/python-clitool-py34
+    $ source ~/.pyvenv/python-clitool-py34/bin/activate
 
 Install build tool, ``waf``.
 
 ::
 
-    $ ln -s `pwd`/etc/waf-1.7.13 ~/pyvenv3/clitool/bin/waf
+    $ ln -s `pwd`/etc/waf-1.7.13 ~/.pyvenv/python-clitool-py34/bin/waf
 
-Install ``pip`` and dependant libraries.
+Install dependant libraries.
 
 ::
 
-    $ curl -O http://python-distribute.org/distribute_setup.py
-    $ python distribute_setup.py
-    $ rm distribute*
-    $ easy_install-3.3 pip
-    $ pip-3.3 install -r requirements.txt
-    $ pip-3.3 install -r dev-requirements.txt
+    $ pip install -r requirements.txt
+    $ pip install -r dev-requirements.txt
 
 Check installation
 ------------------
@@ -115,7 +110,7 @@ Project layout
 Copyright and license
 ======================
 
-Copyright 2013 Shigeru Kitazaki
+Copyright 2014 Shigeru Kitazaki
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -128,3 +123,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
