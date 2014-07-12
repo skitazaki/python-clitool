@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 APPNAME = 'clitool'
-VERSION = '0.4.0'
+VERSION = '0.4.1'
 
 top = '.'
 out = '_build'

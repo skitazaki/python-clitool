@@ -85,7 +85,7 @@ Example scripts exist in git repository.
 """
 
 __title__ = 'clitool'
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 __author__ = 'KITAZAKI Shigeru'
 
 # Constant values.
