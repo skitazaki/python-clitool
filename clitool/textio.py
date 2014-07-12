@@ -121,4 +121,40 @@ class RowMapper(object):
         return dt
 
 
+class DictMapper(object):
+    """Convert dictionary object to list of strings of values.
+    """
+
+    def __init__(self, fields):
+        self.fields = fields
+
+    def __call__(self, dt):
+        out = []
+        for f in self.fields:
+            k, t = f['id'], f['type']
+            v = dt.get(k, f.get('default', ''))
+            if t == 'string':
+                val = v
+            elif not v:
+                val = ''
+            elif t == 'datetime':
+                val = v.strftime(f['format'])
+            elif t == 'integer':
+                val = str(v)
+            elif t == 'float':
+                if 'precision' in f:
+                    v = round(v, f['precision'])
+                val = str(v)
+            elif t == 'boolean':
+                m = f.get('mapping', {})
+                if v in m:
+                    val = m[v]
+                else:
+                    val = str(v)
+            else:
+                raise ValueError('Unknown type "{}" for "{}"'.format(t, k))
+            out.append(val)
+        return out
+
+
 # vim: set et ts=4 sw=4 cindent fileencoding=utf-8 :
