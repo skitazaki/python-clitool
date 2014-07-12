@@ -157,7 +157,8 @@ YAML style
 Parsed record is a map object which has following properties.
 
 - *host* : Remote IP address.
-- *time* : Access date and time. (datetime object)
+- *time* : Access date and time. (datetime; naive)
+- *utcoffset* : UTC offset of access time (timedelta)
 - *path* : HTTP request path which is splitted from query.
 - *query* : HTTP requert query string which is removed from "?".
 - *method* : HTTP request method.
