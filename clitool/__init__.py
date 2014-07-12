@@ -70,22 +70,10 @@ This file can parse basic command line options and arguments.
       -q, --quiet           set logging to quiet mode
 
 Edit this script on your own :D
-
-Examples
-========
-
-Example scripts exist in git repository.
-
-* csv2db.py: read csv data and import database via 'SQLAlchemy'.
-* csv2gexf.py: read csv data and dump them by GEXF format via 'NetworkX'.
-* csv2json.py: read csv data and dump them by JSON format.
-* csv2kml.py: read csv data and dump them by KML format via 'simplekml'.
-* logfile.py: parse Apache access log and create report.
-* logparams.py: parse Apache access log and analyze query parameters.
 """
 
 __title__ = 'clitool'
-__version__ = '0.4.1'
+__version__ = '0.4.2dev'
 __author__ = 'KITAZAKI Shigeru'
 
 # Constant values.
